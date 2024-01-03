@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {% include 'bootstrap.html'%}
+
+    {% include 'card.html'%}
+    
+    <title>GoFresh</title>
+  </head>
+  <body>
+    
+    {% include 'header.html' %}
+
+    <div class="container">
+      
+        <div class="row">
+
+          {% for j in product %}
+          <div class="card">
+            <img src="./img/{{ j.name }}.jpg"  alt="{{ j.name }} img loading" style=" height: 180px; width: auto; padding-top: 10px; border-radius: 5px;" />
+            <h1 id="{{ j.name }}">{{ j.name }}</h1>
+            <p class="price">{{ j.description }}</p>
+            <p class="price" id="{{ j.price }}">{{ j.price }}</p>
+            <p><button onclick="addToCart('{{ j.product_id }}')">Add to Cart</button></p>
+          </div>
+        {% endfor %} 
+
+        </div>
+
+        <script>
+          function addToCart(id) {
+              const data = {
+                  id: id,
+              };
+  
+              fetch('/add_to_cart', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(data),
+              })
+              .then(response => response.json())
+              .then(result => {
+                  // Handle the response from the backend if needed
+                  console.log(result.message);
+              })
+              .catch(error => console.error('Error:', error));
+          }
+      </script>
+      
+    </div>
+
+    {% include 'footer.html'%}
+  </body>
+</html>

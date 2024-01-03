@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% include 'bootstrap.html'%} {% include 'card.html'%}
+    <title>GoFreah</title>
+  </head>
+  <body>
+    {% include 'header.html' %}
+
+    <div class="container">
+      <div class="row">
+        {% for j in cart %}
+        <div class="card">
+          <img
+            src="./img/{{ j.name }}.jpg"
+            alt="{{ j.name }} img loading"
+            style="height: 180px; width: auto; padding-top: 10px"
+          />
+          <h1 id="{{ j.name }}">{{ j.name }}</h1>
+          <p class="price">{{ j.description }}</p>
+
+          <p class="price"> <a onclick="decrease('{{ j.product_id }}')" class="btn btn-primary btn-dark">-</a> {{ j.quantity }} qty   <a onclick="increase('{{ j.product_id }}')" class="btn btn-primary btn-dark">+</a></p>
+
+          <p class="price" id="{{ j.price }}">{{ j.price }}</p>
+          <p>
+            <button onclick="deleteFromCart('{{ j.product_id }}')">
+              Delete from Cart
+            </button>
+          </p>
+        </div>
+        {% endfor %}
+      </div>
+
+      <script>
+        function deleteFromCart(id) {
+          const data = {
+            id: id,
+          };
+
+          fetch("/delete_from_cart", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then((response) => response.json())
+            .then((result) => {
+              // Handle the response from the backend if needed
+              console.log(result.message);
+              if (result.refresh) {
+                location.reload(); // Reload the page
+              }
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+
+        function increase(id) {
+              const data = {
+                  id: id,
+              };
+  
+              fetch('/increase', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(data),
+              })
+              .then(response => response.json())
+              .then(result => {
+                  // Handle the response from the backend if needed
+                  console.log(result.message);
+                  if( result.refresh ){
+                    location.reload();
+                  }
+              })
+              .catch(error => console.error('Error:', error));
+          }
+          function decrease(id) {
+              const data = {
+                  id: id,
+              };
+  
+              fetch('/decrease', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(data),
+              })
+              .then(response => response.json())
+              .then(result => {
+                  // Handle the response from the backend if needed
+                  console.log(result.message);
+                  if( result.refresh ){
+                    location.reload();
+                  }
+              })
+              .catch(error => console.error('Error:', error));
+          }
+      </script>
+    </div>
+
+    {% include 'footer.html'%}
+  </body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {% include 'bootstrap.html'%}
+
+    {% include 'card.html'%}
+    
+    <title>GoFresh</title>
+  </head>
+  <body>
+    
+    {% include 'header.html' %}
+
+    <div class="container">
+      
+        <div class="row">
+
+        {% for i in category %}
+            <div class="d-flex">
+                <h1 class="">{{ i.name }}</h1>
+                <button onclick="deleteCategory('')" class="btn btn-dark">Delete Category</button>
+            </div>
+            <hr>
+            {% for j in product %}
+                {% if j.category_id == i.category_id %}
+                    <div class="card">
+                        <img src="./img/{{ j.name }}.jpg" alt="{{ j.name }} img loading" style=" height: 180px; width: auto; padding-top: 10px;" />
+                        <h1 id="{{ j.name }}">{{ j.name }}</h1>
+                        <p class="price">{{ j.description }}</p>
+                        <p class="price" id="{{ j.price }}">{{ j.price }}</p>
+                        <p><button onclick="edit('{{ j.product_id }}')">Edit item</button></p>
+                        <p><button onclick="deleteItem('{{ j.product_id }}','{{ j.name }}')">delete item</button></p>
+                    </div>
+                {% endif %}
+            {% endfor %} 
+            
+            <form id="{{ i.category_id }}" enctype="multipart/form-data">
+                <div class="card">
+                    <input type="file" name="file" id="file" style="height: 180px; width: auto;">
+                    <p class="price">please make sure <br>file name is same as product name(.jpg)</p>
+                    <input type="text" name="category_id" id="category_id" placeholder="000" value="{{ i.category_id }}" hidden>
+                    <input type="text" name="name" placeholder="Name" style="text-align: center;">
+                    <input type="text" name="description" placeholder="description" style="text-align: center;">
+                    <input type="text" name="price" placeholder="0.0$" style="text-align: center;">
+                    <p><button onclick="addProduct('{{ i.category_id }}')" style="width: 90%;">Add item</button></p>
+                </div>
+            </form>
+        {% endfor %}
+        <hr>
+        <form id="categoryForm">
+            <table>
+                <tr>
+                    <td>
+                        <input type="text" placeholder="Category name" name="name" id="name" style="height: 38px; margin-right: 10px;">
+                    </td>
+                    <td>
+                        <button onclick="addCategory()" class="btn btn-dark">Add category</button>
+                    </td>
+                </tr>
+            </table>
+
+        </form>
+        </div>
+
+        
+      
+    </div>
+
+    <script>
+        function addProduct(id){
+            const form = document.getElementById(id);
+            const formData = new FormData(form);
+
+            fetch("/add_product",{
+                method:"POST",
+                body: formData,
+            })
+            .then((response) => response.json())
+            .then((result) => {
+              // Handle the response from the backend if needed
+              console.log(result.message);
+              if (result.refresh) {
+                location.reload(); // Reload the page
+              }
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+
+        function addCategory(){
+            const form = document.getElementById('categoryForm')
+            const formData = new FormData(form)
+
+            fetch("/add_category", {
+                method:"POST",
+                body: formData,
+            })
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result.message);
+                if(result.refresh){
+                    location.reload();
+                }
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+
+        function deleteItem(id,name){
+            const data = {
+                id: id,
+                name: name
+            }
+
+            fetch("/delete_product",{
+                method: "POST",
+                headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(data),
+            })
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result.message);
+                if(result.refresh){
+                    location.reload();
+                }
+            })
+            .catch((error) => console.error("Error:",error))
+        }
+    </script>
+    
+
+    {% include 'footer.html'%}
+  </body>
+</html>
