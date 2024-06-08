@@ -2,6 +2,13 @@
 
 GoFresh is a web application developed using Flask, which utilizes an SQLite database for data storage. This application is designed to run in a virtual environment.
 
+# Demo
+
+
+
+https://github.com/ashish-sreevatsav/GoFresh/assets/115939043/c4430a41-c0d1-4944-aa2c-a363aa725a48
+
+
 
 ## Description
 
